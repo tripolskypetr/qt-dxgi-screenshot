@@ -1,4 +1,6 @@
-#QPixmap не делает скрин окна веб браузера
+# QPixmap не делает скрин окна веб браузера
+
+Обсуждение на StackOverflow велось [тут][6]
 
 Вопрос:
 
@@ -95,3 +97,4 @@
   [3]: https://github.com/tripolskypetr/qt-dxgi-screenshot
   [4]: https://i.stack.imgur.com/DWF3Y.png
   [5]: https://ru.wikipedia.org/wiki/%D0%90%D0%B2%D1%82%D0%BE%D1%81%D0%B2%D1%8F%D0%B7%D1%8B%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5
+  [6]: https://ru.stackoverflow.com/a/965903/233158
