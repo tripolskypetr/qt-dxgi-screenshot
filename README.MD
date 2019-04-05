@@ -1,30 +1,28 @@
-# QPixmap не делает скрин окна веб браузера
+# QPixmap doesn't grab web browser window
 
-Обсуждение на StackOverflow велось [тут][6]
+From [here][6]
 
-Вопрос:
+Question:
 
- >Когда я использую QPixmap::GrabWindow(WId) на окне с веб
- >браузером (например, Chrome), он возвращает мне просто черный
- >экран. Использую следующий код:
- >QScreen *screen = QGuiApplication::primaryScreen();
- >m_pixmap = screen->grabWindow(hW);
- >m_image = m_pixmap.toImage();
- >m_image.save("p.png");
- >p.png - получается просто черная картинка. С другими окнами
- >получается нормально (например, скрин проводника). Как можно
- >сделать скрин окна браузера?
+>When I use QPixmap::GrabWindow(WId) with web browser window it returns me just black screen.
+>I'm using the following code:
+>QScreen *screen = QGuiApplication::primaryScreen();
+>m_pixmap = screen->grabWindow(hW);
+>m_image = m_pixmap.toImage();
+>m_image.save("p.png");
+>When I open "p.png" it is just black picture. With other windows this work well.
+>How can I take a normal screen of browser?
 
-Ответ:
+Answer:
 
-Дело в том, что QScreen::grabWindow использует [Windows GDI][1] для захвата картинки. Это достаточно древнее API, которое используют программы без аппаратного ускорения (рисуются процессором). А хром - ПО не древнее и уже давно рисуется средствами [Windows DXGI][2].
+The fact is that QScreen :: grabWindow uses [Windows GDI] [1] to capture the image. This is a rather ancient API that is used by programs without hardware acceleration (drawn by the processor). And chrome - the software is not ancient and has long been drawn by means of [Windows DXGI] [2].
 
-Я уже писал ПО, которое использует эту технологию. Опубликовал пример кода [тут][3]. Собирается компилятором MSVC на библиотеке Qt 5.10, вроде бы без разницы, 2015 или 2017. Моя машина 64 битная, возможно это тоже важно.
+I already wrote software that uses this technology. Published sample code [here] [3]. It is going to be compiled by the MSVC compiler on the Qt 5.10 library, seemingly no difference, 2015 or 2017. My machine is 64 bit, maybe this is also important.
 
-![Screenshot](screenshot.png "Screenshot")
+[![введите сюда описание изображения][4]][4]
 
 
-Внутри два класса: FrameBroadcast и FrameCapturer. FrameBroadcast запрашивает скриншот с некоторым временным интервалом из FrameCapturer и через сигнал `void frameCaptured(QSharedPointer<Frame> frame);` рассылает подписчикам. QSharedPointer автоматически удаляет память, выделенную под содержимое экрана, как только выходит из области видимости всех обработчиков слота.
+Inside there are two classes: FrameBroadcast and FrameCapturer. FrameBroadcast requests a screenshot with a certain time interval from FrameCapturer and sends the subscriber via the signal `void frameCaptured (QSharedPointer <Frame> frame);` QSharedPointer automatically deletes the memory allocated for the screen contents as soon as it goes out of scope for all slot handlers.
 
     #include <QApplication>
     #include <QObject>
@@ -79,7 +77,7 @@
         return app.exec();
     }
 
-В main.cpp создается простенькое диалоговое окно, на которое выводится результат захвата. На всякий случай я приложил код, который отвязывает содержимое экрана от QSharedPointer, если разместить все манипуляции в одном слоте не удастся. Он сразу после инклудов и закомментирован.
+In main.cpp, a simple dialog box is created, which displays the result of the capture. Just in case, I attached a code that untie the contents of the screen from QSharedPointer, if it is not possible to place all the manipulations in one slot. It is immediately after the inclusions and commented out.
 
     #pragma comment(lib,"dxgi.lib")
     #pragma comment(lib,"D3D11.lib")
@@ -89,7 +87,7 @@
     #pragma comment (lib, "user32.lib")
     #pragma comment (lib, "dxguid.lib")
 
-Детально разбирать код нет смысла. Он слишком большой, но переоборудовать под свои нужды труда не составит. Примечательно, что используется "[Автосвязывание][5]" - фишка компилятора Microsoft: необходимые библиотеки сами подтянутся на этапе компиляции (загляните в framecapturer.h)
+It makes no sense to parse the code in detail. It is too big, but it will not be difficult to retool to fit your needs. It is noteworthy that "[Auto-linking] [5]" is used - the Microsoft compiler feature: the necessary libraries will pull themselves up at compile time (look in framecapturer.h)
 
 
   [1]: https://ru.wikipedia.org/wiki/GDI
@@ -97,4 +95,4 @@
   [3]: https://github.com/tripolskypetr/qt-dxgi-screenshot
   [4]: https://i.stack.imgur.com/DWF3Y.png
   [5]: https://ru.wikipedia.org/wiki/%D0%90%D0%B2%D1%82%D0%BE%D1%81%D0%B2%D1%8F%D0%B7%D1%8B%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5
-  [6]: https://ru.stackoverflow.com/a/965903/233158
+  [6]: https://stackoverflow.com/a/55535047/7388307
