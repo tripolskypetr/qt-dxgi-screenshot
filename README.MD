@@ -19,8 +19,7 @@ The fact is that QScreen :: grabWindow uses [Windows GDI] [1] to capture the ima
 
 I already wrote software that uses this technology. Published sample code [here] [3]. It is going to be compiled by the MSVC compiler on the Qt 5.10 library, seemingly no difference, 2015 or 2017. My machine is 64 bit, maybe this is also important.
 
-[![введите сюда описание изображения][4]][4]
-
+![screenshot](./screenshot.png)
 
 Inside there are two classes: FrameBroadcast and FrameCapturer. FrameBroadcast requests a screenshot with a certain time interval from FrameCapturer and sends the subscriber via the signal `void frameCaptured (QSharedPointer <Frame> frame);` QSharedPointer automatically deletes the memory allocated for the screen contents as soon as it goes out of scope for all slot handlers.
 
@@ -93,6 +92,5 @@ It makes no sense to parse the code in detail. It is too big, but it will not be
   [1]: https://ru.wikipedia.org/wiki/GDI
   [2]: https://en.wikipedia.org/wiki/DirectX_Graphics_Infrastructure
   [3]: https://github.com/tripolskypetr/qt-dxgi-screenshot
-  [4]: https://i.stack.imgur.com/DWF3Y.png
   [5]: https://ru.wikipedia.org/wiki/%D0%90%D0%B2%D1%82%D0%BE%D1%81%D0%B2%D1%8F%D0%B7%D1%8B%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5
   [6]: https://stackoverflow.com/a/55535047/7388307
